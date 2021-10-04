@@ -40,7 +40,7 @@
 --Edited By: Scott Koenig --Twitter: @Scott_Kjr
 --SQLite query for KnowledgeC.db /notification/usage in iOS 14
 --This query was tested in DB Browser for SQLite iOS versions 14.4.2 and 14.7.1
---For details see blog post here: will be added later...
+--For details see blog post here: https://theforensicscooter.com/2021/10/03/ios-knowledgec-db-notifications/
 --Reminder to always test and validate!
 
 SELECT
