@@ -1,0 +1,90 @@
+----------------------------------------------------------------------------------
+--       Copyright (c) 2018-2020 Sarah Edwards (Station X Labs, LLC, 
+--       @iamevltwin, mac4n6.com). All rights reserved.
+
+--       This software is provided "as is," without warranty of any kind,
+--#       express or implied.  In no event shall the author or contributors
+--#       be held liable for any damages arising in any way from the use of
+--#       this software.
+
+--#       The contents of this file are DUAL-LICENSED.  You may modify and/or
+--#       redistribute this software according to the terms of one of the
+--#       following two licenses (at your option):
+
+--#       LICENSE 1 ("BSD-like with acknowledgment clause"):
+
+--#       Permission is granted to anyone to use this software for any purpose,
+--#       including commercial applications, and to alter it and redistribute
+--#       it freely, subject to the following restrictions:
+
+--#       1. Redistributions of source code must retain the above copyright
+--#          notice, disclaimer, and this list of conditions.
+--#       2. Redistributions in binary form must reproduce the above copyright
+--#          notice, disclaimer, and this list of conditions in the documenta-
+--#          tion and/or other materials provided with the distribution.
+--#       3. All advertising, training, and documentation materials mentioning 
+--#          features or use of this software must display the following 
+--#          acknowledgment. Character-limited social media may abbreviate this 
+--#          acknowledgment to include author and APOLLO name ie: "This new 
+--#          feature brought to you by @iamevltwin's APOLLO". Please make an 
+--#          effort credit the appropriate authors on specific APOLLO modules.
+--#          The spirit of this clause is to give public acknowledgment to 
+--#          researchers where credit is due.
+
+--#             This product includes software developed by Sarah Edwards 
+--#             (Station X Labs, LLC, @iamevltwin, mac4n6.com) and other 
+--#             contributors as part of APOLLO (Apple Pattern of Life Lazy 
+--#             Output'er). 
+--# --------------------------------------------------------------------------------
+--Original query completed by Sarah Edwards
+--Edited By: Scott Koenig --Twitter: @Scott_Kjr
+--SQLite query for KnowledgeC.db /notification/usage in iOS 14
+--This query was tested in DB Browser for SQLite iOS versions 14.4.2 and 14.7.1
+--For details see blog post here: will be added later...
+--Reminder to always test and validate!
+
+SELECT
+  DateTime(ZOBJECT.ZSTARTDATE + 978307200, 'UNIXEPOCH') AS 'Start_Date',
+  DateTime(ZOBJECT.ZENDDATE + 978307200, 'UNIXEPOCH') AS 'End_Date',
+  DateTime(ZOBJECT.ZCREATIONDATE + 978307200, 'UNIXEPOCH') AS 'Creation_Date',
+  DateTime(ZOBJECT.ZLOCALCREATIONDATE + 978307200, 'UNIXEPOCH', 'localtime') AS 'Local_Creation_Date',
+  ZOBJECT.ZSTREAMNAME AS 'Object_StreamName',
+  ZOBJECT.ZVALUESTRING AS 'Notificaion_Type',
+  ZSTRUCTUREDMETADATA.Z_DKNOTIFICATIONUSAGEMETADATAKEY__BUNDLEID AS 'SMD_BundleID',
+  ZSTRUCTUREDMETADATA.Z_DKNOTIFICATIONUSAGEMETADATAKEY__IDENTIFIER AS 'SMD_ID',
+  CASE ZOBJECT.ZSTARTDAYOFWEEK
+    WHEN '1' THEN 'Sunday'
+	WHEN '2' THEN 'Monday'
+	WHEN '3' THEN 'Tuesday'
+	WHEN '4' THEN 'Wednesday'
+	WHEN '5' THEN 'Thursday'
+	WHEN '6' THEN 'Friday'
+	WHEN '7' THEN 'Saturday'
+  END AS 'Start_Day_of_the_Week',
+  ZOBJECT.ZSTARTSECONDOFDAY AS 'StartSecondofDay',
+  CASE ZOBJECT.ZENDDAYOFWEEK
+    WHEN '1' THEN 'Sunday'
+	WHEN '2' THEN 'Monday'
+	WHEN '3' THEN 'Tuesday'
+	WHEN '4' THEN 'Wednesday'
+	WHEN '5' THEN 'Thursday'
+	WHEN '6' THEN 'Friday'
+	WHEN '7' THEN 'Saturday'
+  END AS 'End_Day_of_the_Week',
+  ZOBJECT.ZENDSECONDOFDAY AS 'EndSecondOfDay',
+  ZOBJECT.ZSECONDSFROMGMT/3600 AS "GMT OFFSET",
+  CASE ZOBJECT.ZHASSTRUCTUREDMETADATA
+    WHEN '0' THEN 'No'
+	WHEN '1' THEN 'Yes'
+  END AS 'Has_Structured_Metadata',
+  ZOBJECT.ZSTRUCTUREDMETADATA AS 'SMD_ZPK',
+  ZOBJECT.Z_PK AS 'ZOBJECT_ZPK',
+  ZOBJECT.ZVALUEINTEGER AS 'ValueInterger',
+  ZOBJECT.ZVALUETYPECODE AS 'ValueTypeCode',
+  ZOBJECT.ZVALUEDOUBLE AS 'ValueDouble',
+  ZOBJECT.ZUUID AS 'ZOBJECT_UUID',
+  ZSTRUCTUREDMETADATA.ZMETADATAHASH AS 'SMD_MetadataHash'
+FROM ZOBJECT
+  LEFT JOIN ZSTRUCTUREDMETADATA ON ZSTRUCTUREDMETADATA.Z_PK = ZOBJECT.ZSTRUCTUREDMETADATA
+  WHERE ZSTREAMNAME IS '/notification/usage'
+  ORDER by ZOBJECT.ZSTARTDATE
